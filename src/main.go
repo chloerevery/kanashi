@@ -77,10 +77,12 @@ func main() {
 
 	var count int
 
+	var result string
+
 	for packet := range packetSource.Packets() {
 		count++
 		for _, packetLayer := range packet.Layers() {
-			result := analyzer.PeelLayer(packetLayer)
+			result = analyzer.PeelLayer(packetLayer)
 
 			if result == analyzer.MALICIOUS {
 				err := logPacketAsMalicious(packet)
@@ -91,16 +93,20 @@ func main() {
 				break
 			}
 
-			err := logPacketInfo(packet, result, db)
-			if err != nil {
-				panic(err)
-			}
-
-			err = sendPacketThru(packet)
-			if err != nil {
-				panic(err)
-			}
 		}
+		analyzer.PacketSrcIP = nil
+
+		fmt.Printf("%+v\n", packet)
+
+		/*err := logPacketInfo(packet, result, db)
+		if err != nil {
+			panic(err)
+		}
+
+		err = sendPacketThru(packet)
+		if err != nil {
+			panic(err)
+		}*/
 
 		// FOR STATIC PCAP TESTING PURPOSES.
 		// Generates a random sleep duration between (1/(SECOND_FRAC+1)) and 1s.
