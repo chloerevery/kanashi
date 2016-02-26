@@ -2,19 +2,24 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/pcap"
 	"math/rand"
+	"os"
 	"strconv"
 	"sync"
 	"time"
 
-	"kanashi/src/analyzer"
-	database "kanashi/src/db"
+	"analyzer"
+	"live"
 
-	//"analyzer"
+	database "db"
+)
 
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/pcap"
+var (
+	Live = *flag.Bool("live", false, "read real data")
 )
 
 const (
@@ -28,7 +33,10 @@ func init() {
 }
 
 func main() {
-
+	if Live {
+		live.Process()
+		os.Exit(0)
+	}
 	DB_DRIVER := database.CreateAndRegisterDriver()
 
 	// Open database connection.
@@ -50,7 +58,6 @@ func main() {
 	database.CreateTable(db)
 
 	fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
-
 	// Initialize traffic analysis struct to check for destination IP spikes.
 	uniqueDestIps := &analyzer.UniqueDestIps{
 		Mutex:        &sync.Mutex{},
