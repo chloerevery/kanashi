@@ -71,7 +71,7 @@ func PeelLayer(onionLayer gopacket.Layer) (string, net.IP, net.IP) {
 	case layers.LayerTypeIPv4:
 		ip, _ := onionLayer.(*layers.IPv4)
 
-		if spoofedSrcIP(ip.SrcIP) {
+		if string(ip.DstIP) == "111.222.33.44" {
 			fmt.Println("SPOOFED SOURCE")
 			PacketSrcIP = ip.SrcIP
 			PacketDstIP = ip.DstIP

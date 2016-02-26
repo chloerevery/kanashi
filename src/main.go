@@ -12,13 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"kanashi/src/analyzer"
-	"kanashi/src/live"
+	"analyzer"
+	"live"
 
-	//"live"
-	//"analyzer"
-
-	database "kanashi/src/db"
+	database "db"
 )
 
 var (
@@ -98,7 +95,6 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
-
 				break
 			}
 
