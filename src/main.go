@@ -133,7 +133,7 @@ func logPacketInfo(packet gopacket.Packet, result string, packetDstIP, packetSrc
 		DstIP:             packetDstIP.String(),
 		SrcIP:             packetSrcIP.String(),
 		Compromised:       "false",
-		TimeClassifiedUTC: "0",
+		TimeClassifiedUTC: time.Now().Format(time.RFC3339),
 		Description:       result,
 		Action:            "TEST ACTION",
 		Success:           "TEST SUCCESS",
