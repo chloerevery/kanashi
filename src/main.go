@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	Live = *flag.Bool("live", false, "read real data")
-	Intf = *flag.String("intf", "eth0", "interface to monitor")
+	Live = flag.Bool("live", false, "read real data")
+	Intf = flag.String("intf", "eth0", "interface to monitor")
 )
 
 const (
@@ -65,8 +65,8 @@ func main() {
 
 	// Read data from a pcap file.
 	var handle *pcap.Handle
-	if Live {
-		handle, err = live.InitInterface(Intf)
+	if *Live {
+		handle, err = live.InitInterface(*Intf)
 	} else {
 		handle, err = pcap.OpenOffline(pcapFileSrc)
 	}
