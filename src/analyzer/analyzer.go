@@ -14,19 +14,21 @@ func PeelLayers(packet gopacket.Packet) {
 		-DNS requests: read the IP address of every DNS destination.
 	*/
 
+    // Check for malicious TCP.
 	for _, onionLayer := range packet.Layers() {
-
 		switch onionLayer.LayerType() {
-		case layers.LayerTypeTCP:
-			fmt.Println("This is a TCP packet!")
-			// Get actual TCP data from this layer
-			tcp, _ := onionLayer.(*layers.TCP)
-
-			fmt.Printf("TCP: From src port %d to dst port %d\n", tcp.SrcPort, tcp.DstPort)
 		case layers.LayerTypeIPv4:
 			fmt.Println("This is an ipv4 packet!")
 			// Get actual IP header + data from this layer
 			ip, _ := onionLayer.(*layers.IPv4)
+            
+            // CHECK IF PACKET IS BEING SENT TO A MALICIOUS DESTINATION.
+            fmt.Printf("SrcIP: %+v *** DstIP: %+v\n", ip.SrcIP, ip.DstIP)
+            for _, maliciousIP := range maliciousIPs {
+                if ip.DstIP.String() == maliciousIP {
+                    fmt.Println("Packet being sent to a malicious destination...")
+                }
+            }
 
 			fmt.Println("CHLOE, src ip:", ip.SrcIP)
 
