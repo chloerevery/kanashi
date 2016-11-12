@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
     "math/rand"
+    "sync"
 	"time"
 	
 	"kanashi/src/analyzer"
@@ -11,11 +12,16 @@ import (
 	"github.com/google/gopacket/pcap"
 )
 
+func init() {
+    rand.Seed(time.Now().UTC().UnixNano())
+}
+
 func main() {
-
-	rand.Seed(time.Now().UTC().UnixNano())
-
-	uniqueDestIps := &analyzer.UniqueDestIps{}
+	uniqueDestIps := &analyzer.UniqueDestIps{
+		Mutex:        &sync.Mutex{},
+		IPs:          make(map[string]analyzer.Empty),
+		LastSecCount: -1,
+	}
 
 	analyzer.SetDestIPsTracker(uniqueDestIps)
 
