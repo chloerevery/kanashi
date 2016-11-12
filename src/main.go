@@ -11,6 +11,8 @@ import (
 	"kanashi/src/analyzer"
 	database "kanashi/src/db"
 
+	//"analyzer"
+
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 
@@ -122,7 +124,6 @@ func logPacketInfo(packet gopacket.Packet, result string, db *sql.DB) error {
 		return err
 	}
 
-	// TODO: Hit analytics with this info.
 	return nil
 }
 
