@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
     "math/rand"
     "sync"
 	"time"
@@ -12,44 +11,97 @@ import (
 	"github.com/google/gopacket/pcap"
 )
 
+const (
+    pcapFileSrc = "../testdata/test_pcap.pcap"
+    
+    SECOND_FRAC = 10
+)
+
 func init() {
     rand.Seed(time.Now().UTC().UnixNano())
 }
 
 func main() {
+    // Initialize traffic analysis struct to check for destination IP spikes.
 	uniqueDestIps := &analyzer.UniqueDestIps{
 		Mutex:        &sync.Mutex{},
 		IPs:          make(map[string]analyzer.Empty),
 		LastSecCount: -1,
 	}
-
 	analyzer.SetDestIPsTracker(uniqueDestIps)
 
-	// Read data from a pcap file:
-	if handle, err := pcap.OpenOffline("../testdata/test_pcap.pcap"); err != nil {
+	// Read data from a pcap file.
+	handle, err := pcap.OpenOffline(pcapFileSrc)
+	if err != nil {
 		panic(err)
-	} else {
-		packetSource := gopacket.NewPacketSource(handle, handle.LinkType()) // construct packetSource using pcap or pfring
-		for packet := range packetSource.Packets() {
-			// Packets fn returns a channel, then asynchronously writes new packets into that channel, closing the channel if the packetSource hits an end-of-file.
-			for _, onionLayer := range packet.Layers() {
-				result := analyzer.PeelLayer(onionLayer)
-
-				fmt.Println("Result of packet inspection", result)
-				// TODO:
-				// Record (flat file or db write):
-				// -the packet information
-				// -a timestamp
-				// -whether the packet drop was successful(?)
-
-				// TODO:
-				// If result is MALICIOUS, do not send packet.
-				// If result is not malicious, send packet.
-
-			}
-
-			time.Sleep(time.Second / time.Duration(rand.Intn(10)+1))
-		}
 	}
+	
+	// Construct packetSource using pcap file.
+	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+	
+	for packet := range packetSource.Packets() {
+		for _, packetLayer := range packet.Layers() {
+			result := analyzer.PeelLayer(packetLayer)
+			
+			if result == analyzer.MALICIOUS {
+			    err := logPacketAsMalicious(packet)
+			    if err != nil {
+			        panic(err)
+			    }
+			    
+			    break
+			}
+			
+			err := logPacketInfo(packet)
+			if err != nil {
+			    panic(err)
+			}
+			
+			err = sendPacketThru(packet)
+			if err != nil {
+			    panic(err)
+			}
+		}
 
+        // FOR STATIC PCAP TESTING PURPOSES.
+        // Generates a random sleep duration between (1/(SECOND_FRAC+1)) and 1s.
+        sleepDuration := time.Second / time.Duration(rand.Intn(SECOND_FRAC)+1)
+		time.Sleep(sleepDuration)
+	}
 }
+
+// Gens packet info, timestamp, success of packet drop, additional metadata..
+func generatePacketInfo(packet gopacket.Packet) (string, error) {
+    return "packet was good", nil
+}
+
+func logPacketInfo(packet gopacket.Packet) error {
+    // TODO: Grab the first param, to-contain packet info.
+    _, err := generatePacketInfo(packet)
+    if err != nil {
+        return err
+    }
+    
+    // TODO: Hit analytics with this info.
+    return nil
+}
+
+func logPacketAsMalicious(packet gopacket.Packet) error {
+    // TODO: Grab the first param, to-contain packet info.
+    _, err := generatePacketInfo(packet)
+    if err != nil {
+        return err
+    }
+    
+    // info = "packet was bad"
+    
+    // TODO: Hit analytics with this info.
+    return nil
+}
+
+func sendPacketThru(packet gopacket.Packet) error {
+    // TODO: Send packet to its destination.
+    return nil
+}
+
+
