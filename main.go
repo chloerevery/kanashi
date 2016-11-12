@@ -12,7 +12,7 @@ func main() {
 	// 2. Once you have a PacketDataSource, you can pass it into NewPacketSource, along with a Decoder of your choice, to create a PacketSource.
 
 	// Read data from a pcap file:
-	if handle, err := pcap.OpenOffline("../../testdata/test_pcap.pcap"); err != nil {
+	if handle, err := pcap.OpenOffline("testdata/test_pcap.pcap"); err != nil {
 		panic(err)
 	} else {
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType()) // construct packetSource using pcap or pfring
