@@ -2,6 +2,7 @@ package main
 
 import (
 	"analyzer"
+	"fmt"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	"math/rand"
@@ -23,7 +24,21 @@ func main() {
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType()) // construct packetSource using pcap or pfring
 		for packet := range packetSource.Packets() {
 			// Packets fn returns a channel, then asynchronously writes new packets into that channel, closing the channel if the packetSource hits an end-of-file.
-			analyzer.PeelLayers(packet) // do something with each packet
+			for _, onionLayer := range packet.Layers() {
+				result := analyzer.PeelLayer(onionLayer)
+
+				fmt.Println("Result of packet inspection", result)
+				// TODO:
+				// Record (flat file or db write):
+				// -the packet information
+				// -a timestamp
+				// -whether the packet drop was successful(?)
+
+				// TODO:
+				// If result is MALICIOUS, do not send packet.
+				// If result is not malicious, send packet.
+
+			}
 
 			time.Sleep(time.Second / time.Duration(rand.Intn(10)+1))
 		}
