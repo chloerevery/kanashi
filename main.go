@@ -4,12 +4,17 @@ import (
 	"analyzer"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
+	"math/rand"
+	"time"
 )
 
 func main() {
-	// Read packets in via a PacketSource:
-	// 1. Construct an object that implements the PacketDataSource interface.
-	// 2. Once you have a PacketDataSource, you can pass it into NewPacketSource, along with a Decoder of your choice, to create a PacketSource.
+
+	rand.Seed(time.Now().UTC().UnixNano())
+
+	uniqueDestIps := &analyzer.UniqueDestIps{}
+
+	analyzer.SetDestIPsTracker(uniqueDestIps)
 
 	// Read data from a pcap file:
 	if handle, err := pcap.OpenOffline("testdata/test_pcap.pcap"); err != nil {
@@ -19,6 +24,9 @@ func main() {
 		for packet := range packetSource.Packets() {
 			// Packets fn returns a channel, then asynchronously writes new packets into that channel, closing the channel if the packetSource hits an end-of-file.
 			analyzer.PeelLayers(packet) // do something with each packet
+
+			time.Sleep(time.Second / time.Duration(rand.Intn(10)+1))
 		}
 	}
+
 }
