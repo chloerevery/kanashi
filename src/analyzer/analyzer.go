@@ -35,11 +35,11 @@ func SetDestIPsTracker(uniqueDestIps *UniqueDestIps) {
 // PeelLayers takes in a packet with a non-zero number of "layers" and iterates through each layer, collecting data.
 func PeelLayers(packet gopacket.Packet) {
 
+	// Check for malicious TCP.
 	for _, onionLayer := range packet.Layers() {
-
 		switch onionLayer.LayerType() {
 		case layers.LayerTypeTCP:
-			// fmt.Println("This is a TCP packet!")
+			// TODO: Do we want to do any validation in this layer?
 			// Get actual TCP data from this layer
 			// tcp, _ := onionLayer.(*layers.TCP)
 
@@ -48,6 +48,14 @@ func PeelLayers(packet gopacket.Packet) {
 			fmt.Println("This is an ipv4 packet!")
 			// Get actual IP header + data from this layer
 			ip, _ := onionLayer.(*layers.IPv4)
+
+			// CHECK IF PACKET IS BEING SENT TO A MALICIOUS DESTINATION.
+			fmt.Printf("SrcIP: %+v *** DstIP: %+v\n", ip.SrcIP, ip.DstIP)
+			for _, maliciousIP := range maliciousIPs {
+				if ip.DstIP.String() == maliciousIP {
+					fmt.Println("Packet being sent to a malicious destination...")
+				}
+			}
 
 			// Note: Chloe would like someone to confirm that these are the correct values.
 			ipOK := net.ParseIP("192.168.0.0")
@@ -79,6 +87,7 @@ func PeelLayers(packet gopacket.Packet) {
 			}
 
 		case layers.LayerTypeUDP:
+			// TODO: Do we want to do any validation in this layer?
 			// fmt.Println("This is a UDP packet!")
 
 			// Get UDP packet data from this layer.
