@@ -28,10 +28,16 @@ func PeelLayers(packet gopacket.Packet) {
 			ip, _ := onionLayer.(*layers.IPv4)
 
 			fmt.Printf("IPv4: From src ip %d to dst ip %d\n", ip.SrcIP, ip.DstIP)
-		
-		// TODO: UDP
+		case layers.LayerTypeUDP:
+			fmt.Println("This is a UDP packet!")
+			// Get actual IP header + data from this layer
+			udp, _ := onionLayer.(*layers.UDP)
 
+			fmt.Printf("UDP: From src port %d to dst port %d\n", udp.SrcPort, udp.DstPort)
+			// TODO: UDP
+
+		}
+
+		// TODO: Get data from other layers.
 	}
-
-	// TODO: Get data from other layers.
 }
