@@ -1,12 +1,14 @@
 package main
 
 import (
-	"analyzer"
 	"fmt"
+    "math/rand"
+	"time"
+	
+	"kanashi/src/analyzer"
+	
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
-	"math/rand"
-	"time"
 )
 
 func main() {
@@ -18,7 +20,7 @@ func main() {
 	analyzer.SetDestIPsTracker(uniqueDestIps)
 
 	// Read data from a pcap file:
-	if handle, err := pcap.OpenOffline("testdata/test_pcap.pcap"); err != nil {
+	if handle, err := pcap.OpenOffline("../testdata/test_pcap.pcap"); err != nil {
 		panic(err)
 	} else {
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType()) // construct packetSource using pcap or pfring
