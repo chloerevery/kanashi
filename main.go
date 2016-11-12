@@ -18,7 +18,7 @@ func main() {
 		packetSource := gopacket.NewPacketSource(handle, handle.LinkType()) // construct packetSource using pcap or pfring
 		for packet := range packetSource.Packets() {
 			// Packets fn returns a channel, then asynchronously writes new packets into that channel, closing the channel if the packetSource hits an end-of-file.
-			analyzer.peelLayers(packet) // do something with each packet
+			analyzer.PeelLayers(packet) // do something with each packet
 		}
 	}
 }

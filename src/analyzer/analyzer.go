@@ -6,8 +6,8 @@ import (
 	"github.com/google/gopacket/layers"
 )
 
-// handlePacket takes in a packet with a non-zero number of "layers" and iterates through each layer, collecting data.
-func peelLayers(packet gopacket.Packet) {
+// PeelLayers takes in a packet with a non-zero number of "layers" and iterates through each layer, collecting data.
+func PeelLayers(packet gopacket.Packet) {
 	/*
 		Things to look for:
 		-DNS requests: read the IP address of every DNS destination.
