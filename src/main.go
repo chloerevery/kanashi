@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "math/rand"
     "sync"
 	"time"
@@ -93,6 +94,8 @@ func logPacketAsMalicious(packet gopacket.Packet) error {
         return err
     }
     
+    fmt.Printf("REJECTED PACKET: %+v\n", packet)
+    
     // info = "packet was bad"
     
     // TODO: Hit analytics with this info.
@@ -101,6 +104,7 @@ func logPacketAsMalicious(packet gopacket.Packet) error {
 
 func sendPacketThru(packet gopacket.Packet) error {
     // TODO: Send packet to its destination.
+    fmt.Printf("SENDING PACKET: %+v\n", packet)
     return nil
 }
 

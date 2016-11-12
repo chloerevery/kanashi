@@ -57,18 +57,16 @@ func PeelLayer(onionLayer gopacket.Layer) string {
 		ip, _ := onionLayer.(*layers.IPv4)
     
         if spoofedSrcIP(ip.SrcIP) {
+            fmt.Println("SPOOFED SOURCE")
             return MALICIOUS
         }
     
         if maliciousDstIP(ip.DstIP) {
+            fmt.Println("MALICIOUS DESTINATION")
             return MALICIOUS
         }   
         
-        logPacketDestination(ip.DstIP) 		
-
-		fmt.Printf("IPv4: From src ip %d to dst ip %d\n", ip.SrcIP, ip.DstIP)
-		fmt.Println("DestIPs.IPs", DestIPs.IPs)
-		fmt.Println("DestIPs.LastSecCount", DestIPs.LastSecCount)
+        logPacketDestination(ip.DstIP)
 
     // TODO: Do we want to do any validation in the TCP layer?
 	case layers.LayerTypeTCP:
@@ -77,6 +75,7 @@ func PeelLayer(onionLayer gopacket.Layer) string {
 		// TODO: Only perform the below check if request is not from in-network.
 		if tcp.DstPort == 22 || tcp.DstPort == 23 {
 		 	// TODO: Return packet + device information.
+		 	fmt.Println("PORT SCANNING DETECTED")
 		 	return MALICIOUS 
 		}
 
@@ -118,15 +117,11 @@ func (uDestIps *UniqueDestIps) RunUniqueDestIpSync() {
 
 	go func() {
 		for {
-			start := time.Now()
-			fmt.Println("Started UniqueDestIps sync.")
-
 			result := uDestIps.checkAndUpdateUniqueDestIps()
             if result == MALICIOUS {
                 fmt.Println("TRAFFIC SPIKE")
             }
-
-			fmt.Println("CheckAndUpdate duration ", time.Since(start).Seconds())
+            
 			time.Sleep(time.Second)
 		}
 	}()
@@ -143,7 +138,7 @@ func (uDestIps *UniqueDestIps) checkAndUpdateUniqueDestIps() string {
 
 	if lastSecCount != -1 && lastSecCount != 0 {
 	    trafficDifference := float64(len(ips)) - lastSecCount
-		percentIncrease := trafficDifference / lastSecCount
+		percentIncrease := (trafficDifference / lastSecCount) * 100
 
 		if percentIncrease > SUSPICIOUS_DEST_IP_INCREASE_THRESHOLD {
 			// TODO: return packet + device information. 
@@ -156,8 +151,6 @@ func (uDestIps *UniqueDestIps) checkAndUpdateUniqueDestIps() string {
 	uDestIps.Mutex.Lock()
 	uDestIps.LastSecCount = len(ips)
 	uDestIps.IPs = make(map[string]Empty)
-	fmt.Println("NEW DestIPs.ips", uDestIps.IPs)
-	fmt.Println("NEW DestIPs.lastSecCount", uDestIps.LastSecCount)
 	uDestIps.Mutex.Unlock()
 
     // TODO: Implement different response codes for this check.
