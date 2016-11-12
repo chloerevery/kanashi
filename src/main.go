@@ -52,16 +52,16 @@ func main() {
 			    
 			    break
 			}
+		}
+		
+		err := logPacketInfo(packet)
+		if err != nil {
+		    panic(err)
+		}
 			
-			err := logPacketInfo(packet)
-			if err != nil {
-			    panic(err)
-			}
-			
-			err = sendPacketThru(packet)
-			if err != nil {
-			    panic(err)
-			}
+		err = sendPacketThru(packet)
+		if err != nil {
+		    panic(err)
 		}
 
         // FOR STATIC PCAP TESTING PURPOSES.
