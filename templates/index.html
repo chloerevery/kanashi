@@ -7,11 +7,48 @@
     <!-- css -->
     <link href="../static/styles.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Hour', 'Camera', 'Toaster', 'Echo'],
+          ['0900',  5,      4,    9],
+          ['1000',  3,      2,    7],
+          ['1100',  7,      9,    2],
+          ['1200',  8,      5,    22],
+          ['1300',  9,      7,    24],
+          ['1400',  1,      2,    5]
+        ]);
+
+        var options = {
+          title: 'Malicious Attacks',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
     </head>
 
     <body>
-      <div class="KANA-SHI">KANA<br>SHI</div>
-      <div class="Wifi-Name">Your<br>Network</div>
+      <div class="KANA-SHI"><img src="https://scontent-sjc2-1.xx.fbcdn.net/v/t34.0-0/p280x280/15050246_10155417697559460_523695731_n.gif?oh=f268314ce1e611367ec1dc4944d26887&oe=582AF816" width ="125px" height=" 100px"/></div>
+
+    <canvas id="canvas"></canvas>
+        <div class="top">
+          <div class="devices" id="1" style="visibility:hidden" style="cursor:pointer"><img id="camera" src="http://simpleicon.com/wp-content/uploads/camera.png" width="70px" height="70px"></div>
+          <div class="devices" id="2" style="visibility:hidden" style="cursor:pointer"> <img id="echo" src="https://cdn1.iconfinder.com/data/icons/modern-future-technology-2/128/smart-speaker-512.png" width="75px" height="75px"></div>
+          <div class="devices" id="3" style="visibility:hidden" style="cursor:pointer"><img id="toaster" src="https://cdn3.iconfinder.com/data/icons/breakfast-icons/459/Toaster-512.png" width="60px" height="60px"></div>
+          <div class="devices" id="4" style="visibility:hidden" style="cursor:pointer"><img id="toaster" src="https://cdn3.iconfinder.com/data/icons/breakfast-icons/459/Toaster-512.png" width="60px" height="60px"></div>
+        </div>
+        <div id="curve_chart" style="width: 900px; height: 500px"></div>
+
+      <div id ="table">
 
        <div class="to-device-a">
         <h3>Packets Sent to Device A</h3>
@@ -60,8 +97,6 @@
         <td>Source IP</td>
         <td>Dest IP</td>
         <td>Packet uID</td>
-        </tr>
-
 
         {% for packet in packets_from_ip_a %}
           <tr>
@@ -188,93 +223,89 @@
 
     <style>
 
-.links line {
-  stroke: #999;
-  stroke-opacity: 0.6;
-}
-
-.nodes circle {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
 
 </style>
-<svg width="960" height="600"></svg>
-<script src="https://d3js.org/d3.v4.min.js"></script>
+
 <script>
+var canvas = document.getElementById("canvas"),
+context = canvas.getContext("2d"),
+width = canvas.width = window.innerWidth - 100,
+height = canvas.height = window.innerHeight - 100;
 
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+var Line = {
+  x: 0,
+  y: 0,
+  length: 100,
+  angle: 0,
+  parent: null,
 
-var color = d3.scaleOrdinal(d3.schemeCategory20);
+  create: function(x, y, length, angle) {
+    var obj = Object.create(this);
+    obj.init(x, y, length, angle);
+    return obj;
+  },
 
-var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().id(function(d) { return d.id; }))
-    .force("charge", d3.forceManyBody())
-    .force("center", d3.forceCenter(width / 2, height / 2));
+  init: function(x, y, length, angle) {
+    this.x = x;
+    this.y = y;
+    this.length = length;
+    this.angle = angle;
+  },
 
-d3.json("/static/devices.json", function(error, graph) {
-  if (error) throw error;
+  getEndX: function() {
+    var angle = this.angle;
+    return this.x + Math.cos(angle) * this.length;
+  },
 
-  var link = svg.append("g")
-      .attr("class", "links")
-    .selectAll("line")
-    .data(graph.links)
-    .enter().append("line")
-      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+  getEndY: function() {
+    var angle = this.angle;
+    return this.y + Math.sin(angle) * this.length;
+  },
 
-  var node = svg.append("g")
-      .attr("class", "nodes")
-    .selectAll("circle")
-    .data(graph.nodes)
-    .enter().append("circle")
-      .attr("r", 5)
-      .attr("fill", function(d) { return color(d.group); })
-      .call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
-
-  node.append("title")
-      .text(function(d) { return d.id; });
-
-  simulation
-      .nodes(graph.nodes)
-      .on("tick", ticked);
-
-  simulation.force("link")
-      .links(graph.links);
-
-  function ticked() {
-    link
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-
-    node
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+  render: function(context) {
+    context.strokeStyle = "#ba8ffd";
+    context.beginPath();
+    context.moveTo(this.x, this.y);
+    context.lineTo(this.getEndX(), this.getEndY());
+    context.stroke();
   }
+};
+
+var line = Line.create(width / 2, height / 2, (height/ 2 - 10), 0);
+var angle = 0;
+context.lineWidth = 0.25;
+
+
+update();
+
+function update() {
+  context.strokeStyle = "#ba8ffd";
+  context.beginPath();
+  context.moveTo(line.getEndX(), line.getEndY());
+
+  line.angle = Math.sin(angle) / Math.random();
+  angle += 0.025;
+
+  context.lineTo(line.getEndX(), line.getEndY());
+  context.stroke();
+
+  requestAnimationFrame(update);
+}
+
+
+$(document).ready(function() {
+  
+  $("#1").animate({position: "relative", bottom: '+=375', right: '400px',height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},750);
+  $("#2").animate({position: "relative",right: '400px', bottom: '-=200', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},1750);
+  $("#3").animate({position: "relative",left: '400px',bottom: '-=200', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},2250);
+  $("#4").animate({position: "relative", bottom: '+=375', left: '400px', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},750);
+  document.getElementById("1").style.visibility='visible';  
+  document.getElementById("2").style.visibility='visible'; 
+  document.getElementById("3").style.visibility='visible';
+  document.getElementById("4").style.visibility='visible';
+
 });
 
-function dragstarted(d) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-  d.fx = d.x;
-  d.fy = d.y;
-}
-
-function dragged(d) {
-  d.fx = d3.event.x;
-  d.fy = d3.event.y;
-}
-
-function dragended(d) {
-  if (!d3.event.active) simulation.alphaTarget(0);
-  d.fx = null;
-  d.fy = null;
-}
 
 </script>
 
