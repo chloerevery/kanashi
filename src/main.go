@@ -12,10 +12,13 @@ import (
 	"sync"
 	"time"
 
-	"analyzer"
-	"live"
+	"kanashi/src/analyzer"
+	"kanashi/src/live"
 
-	database "db"
+	//"live"
+	//"analyzer"
+
+	database "kanashi/src/db"
 )
 
 var (
@@ -57,7 +60,7 @@ func main() {
 	// Create table to store packet info and decisions.
 	database.CreateTable(db)
 
-	fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
+	fmt.Println("CONTENTS OF DATABASE (SHOULD BE EMPTY)", database.ReadItem(db))
 	// Initialize traffic analysis struct to check for destination IP spikes.
 	uniqueDestIps := &analyzer.UniqueDestIps{
 		Mutex:        &sync.Mutex{},
