@@ -73,11 +73,15 @@ func PeelLayer(onionLayer gopacket.Layer) (string, net.IP, net.IP) {
 
 		if spoofedSrcIP(ip.SrcIP) {
 			fmt.Println("SPOOFED SOURCE")
+			PacketSrcIP = ip.SrcIP
+			PacketDstIP = ip.DstIP
 			return MALICIOUS, PacketDstIP, PacketSrcIP
 		}
 
 		if maliciousDstIP(ip.DstIP) {
 			fmt.Println("MALICIOUS DESTINATION")
+			PacketSrcIP = ip.SrcIP
+			PacketDstIP = ip.DstIP
 			return MALICIOUS, PacketDstIP, PacketSrcIP
 		}
 

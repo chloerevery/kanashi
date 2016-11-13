@@ -12,6 +12,41 @@
     <body>
       <div class="KANA-SHI">KANA<br>SHI</div>
       <div class="Wifi-Name">Your<br>Network</div>
+
+      <div>
+        <table border="1">
+
+        <tr>
+        <td>Source IP</td>
+        <td>Dest IP</td>
+        <td>Compromised</td>
+        <td>Time Detected (UTC)</td>
+        <td>Threat Description</td>
+        <td>Action Taken</td>
+        <td>Action Success</td>
+        <td>Packet uID</td>
+        </tr>
+
+
+        {% for packet in packet_info %}
+          <tr>
+            <td>{{ packet.src_IP }}</td>
+            <td>{{ packet.dest_IP }}</td>
+            <td>{{ packet.compromised }}</td>
+            <td>{{ packet.time_classified_utc }}</td>
+            <td>{{ packet.description }}</td>
+            <td>{{ packet.action }}</td>
+            <td>{{ packet.success }}</td>
+            <td>{{ packet.packet_ID }}</td>
+          </tr>
+        {% endfor %}
+
+       
+
+        </table>
+      </div>
+
+       
     </body>
 
    <!--  jQuery and js -->
