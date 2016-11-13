@@ -13,30 +13,163 @@
       <div class="KANA-SHI">KANA<br>SHI</div>
       <div class="Wifi-Name">Your<br>Network</div>
 
-      <div>
+       <div class="to-device-a">
+        <h3>Packets Sent to Device A</h3>
+      
         <table border="1">
 
         <tr>
-        <td>Source IP</td>
-        <td>Dest IP</td>
+        <td>Time</td>
         <td>Compromised</td>
-        <td>Time Detected (UTC)</td>
         <td>Threat Description</td>
         <td>Action Taken</td>
         <td>Action Success</td>
+        <td>Source IP</td>
+        <td>Dest IP</td>
         <td>Packet uID</td>
         </tr>
 
 
-        {% for packet in packet_info %}
+        {% for packet in packets_to_ip_a %}
           <tr>
-            <td>{{ packet.src_IP }}</td>
-            <td>{{ packet.dest_IP }}</td>
-            <td>{{ packet.compromised }}</td>
             <td>{{ packet.time_classified_utc }}</td>
+            <td>{{ packet.compromised }}</td>
             <td>{{ packet.description }}</td>
             <td>{{ packet.action }}</td>
             <td>{{ packet.success }}</td>
+            <td>{{ packet.src_IP }}</td>
+            <td>{{ packet.dest_IP }}</td>
+            <td>{{ packet.packet_ID }}</td>
+          </tr>
+        {% endfor %}
+
+        </table>
+      </div>
+
+      <div class="from-device-a">
+        <h3>Packets Sent from Device A</h3>
+      
+        <table border="1">
+
+        <tr>
+        <td>Time</td>
+        <td>Compromised</td>
+        <td>Threat Description</td>
+        <td>Action Taken</td>
+        <td>Action Success</td>
+        <td>Source IP</td>
+        <td>Dest IP</td>
+        <td>Packet uID</td>
+        </tr>
+
+
+        {% for packet in packets_from_ip_a %}
+          <tr>
+            <td>{{ packet.time_classified_utc }}</td>
+            <td>{{ packet.compromised }}</td>
+            <td>{{ packet.description }}</td>
+            <td>{{ packet.action }}</td>
+            <td>{{ packet.success }}</td>
+            <td>{{ packet.src_IP }}</td>
+            <td>{{ packet.dest_IP }}</td>
+            <td>{{ packet.packet_ID }}</td>
+          </tr>
+        {% endfor %}
+        </table>
+      </div>
+
+      <div class="to-device-b">
+        <h3>Packets Sent to Device B</h3>
+      
+        <table border="1">
+
+        <tr>
+        <td>Time</td>
+        <td>Compromised</td>
+        <td>Threat Description</td>
+        <td>Action Taken</td>
+        <td>Action Success</td>
+        <td>Source IP</td>
+        <td>Dest IP</td>
+        <td>Packet uID</td>
+        </tr>
+
+        {% for packet in packets_to_ip_b %}
+          <tr>
+            <td>{{ packet.time_classified_utc }}</td>
+            <td>{{ packet.compromised }}</td>
+            <td>{{ packet.description }}</td>
+            <td>{{ packet.action }}</td>
+            <td>{{ packet.success }}</td>
+            <td>{{ packet.src_IP }}</td>
+            <td>{{ packet.dest_IP }}</td>
+            <td>{{ packet.packet_ID }}</td>
+          </tr>
+        {% endfor %}
+
+        </table>
+      </div>
+
+      <div class="from-device-b">
+        <h3>Packets Sent from Device B</h3>
+      
+        <table border="1">
+
+        <tr>
+        <td>Time</td>
+        <td>Compromised</td>
+        <td>Threat Description</td>
+        <td>Action Taken</td>
+        <td>Action Success</td>
+        <td>Source IP</td>
+        <td>Dest IP</td>
+        <td>Packet uID</td>
+        </tr>
+
+        {% for packet in packets_from_ip_b %}
+          <tr>
+            <td>{{ packet.time_classified_utc }}</td>
+            <td>{{ packet.compromised }}</td>
+            <td>{{ packet.description }}</td>
+            <td>{{ packet.action }}</td>
+            <td>{{ packet.success }}</td>
+            <td>{{ packet.src_IP }}</td>
+            <td>{{ packet.dest_IP }}</td>
+            <td>{{ packet.packet_ID }}</td>
+          </tr>
+        {% endfor %}
+
+        </table>
+      </div>
+
+
+
+      <div class="all-packets">
+        <h3>All Packets Log</h3>
+
+        <table border="1">
+
+        <tr>
+        <td>Time</td>
+        <td>Compromised</td>
+        <td>Threat Description</td>
+        <td>Action Taken</td>
+        <td>Action Success</td>
+        <td>Source IP</td>
+        <td>Dest IP</td>
+        <td>Packet uID</td>
+        </tr>
+
+
+        {% for packet in all_packets %}
+          <tr>
+            <td>{{ packet.time_classified_utc }}</td>
+            <td>{{ packet.compromised }}</td>
+            <td>{{ packet.description }}</td>
+            <td>{{ packet.action }}</td>
+            <td>{{ packet.success }}</td>
+            <td>{{ packet.src_IP }}</td>
+            <td>{{ packet.dest_IP }}</td>
             <td>{{ packet.packet_ID }}</td>
           </tr>
         {% endfor %}
