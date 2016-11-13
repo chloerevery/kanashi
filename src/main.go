@@ -11,8 +11,6 @@ import (
 	"kanashi/src/analyzer"
 	database "kanashi/src/db"
 
-	//"analyzer"
-
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 )
@@ -70,10 +68,12 @@ func main() {
 
 	var count int
 
+	var result string
+
 	for packet := range packetSource.Packets() {
 		count++
 		for _, packetLayer := range packet.Layers() {
-			result := analyzer.PeelLayer(packetLayer)
+			result = analyzer.PeelLayer(packetLayer)
 
 			if result == analyzer.MALICIOUS {
 				err := logPacketAsMalicious(packet)
@@ -85,10 +85,11 @@ func main() {
 			}
 
 		}
-
 		analyzer.PacketSrcIP = nil
 
-		err := logPacketInfo(packet, result, db)
+		fmt.Printf("%+v\n", packet)
+
+		/*err := logPacketInfo(packet, result, db)
 		if err != nil {
 			panic(err)
 		}
@@ -96,7 +97,7 @@ func main() {
 		err = sendPacketThru(packet)
 		if err != nil {
 			panic(err)
-		}
+		}*/
 
 
 		// FOR STATIC PCAP TESTING PURPOSES.

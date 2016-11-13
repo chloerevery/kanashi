@@ -17,6 +17,8 @@ const (
 
     // Percent increase in Unique DstIPs that will denote suspicious activity.
 	SUSPICIOUS_DEST_IP_INCREASE_THRESHOLD = 200
+
+	subnet = "192.168.1.0/24"
 )
 
 var (
@@ -31,6 +33,9 @@ var (
 		IP:   ipOK,     // Network address.
 		Mask: ipOKMask, // Network mask.
 	}
+
+	subnetIPNet *net.IPNet
+	PacketSrcIP net.IP
 )
 
 // Empty struct for existence map.
@@ -41,6 +46,15 @@ type UniqueDestIps struct {
 	Mutex        *sync.Mutex
 	IPs          map[string]Empty
 	LastSecCount int
+}
+
+func init(){
+	_, ipnet, err := net.ParseCIDR(subnet)
+	if err != nil {
+		panic(err)
+	}
+
+	subnetIPNet = ipnet
 }
 
 // SetDestIPsTracker assigns a new UniqueDestIps struct for traffic analysis.
@@ -55,29 +69,32 @@ func PeelLayer(onionLayer gopacket.Layer) string {
 	switch onionLayer.LayerType() {
 	case layers.LayerTypeIPv4:
 		ip, _ := onionLayer.(*layers.IPv4)
-
-	ip.SrcIP = net.ParseIP("127.0.0.1")
-        if spoofedSrcIP(ip.SrcIP) {
-            fmt.Println("SPOOFED SOURCE")
-            return MALICIOUS
-        }
     
-        if maliciousDstIP(ip.DstIP) {
-            fmt.Println("MALICIOUS DESTINATION")
-            return MALICIOUS
-        }   
+		if spoofedSrcIP(ip.SrcIP) {
+		    fmt.Println("SPOOFED SOURCE")
+		    return MALICIOUS
+		}
+
+		if maliciousDstIP(ip.DstIP) {
+		    fmt.Println("MALICIOUS DESTINATION")
+		    return MALICIOUS
+		}
         
-        logPacketDestination(ip.DstIP)
+        	logPacketDestination(ip.DstIP)
+
+		PacketSrcIP = ip.SrcIP
 
     // TODO: Do we want to do any validation in the TCP layer?
 	case layers.LayerTypeTCP:
 		tcp, _ := onionLayer.(*layers.TCP)
 
 		// TODO: Only perform the below check if request is not from in-network.
-		if tcp.DstPort == 22 || tcp.DstPort == 23 {
-		 	// TODO: Return packet + device information.
-		 	fmt.Println("PORT SCANNING DETECTED")
-		 	return MALICIOUS 
+		if PacketSrcIP != nil && !subnetIPNet.Contains(PacketSrcIP) {
+			if tcp.DstPort == 22 || tcp.DstPort == 23 {
+				// TODO: Return packet + device information.
+				fmt.Println("PORT SCANNING DETECTED")
+				return MALICIOUS
+			}
 		}
 
     // TODO: Do we want to do any validation in the UDP layer?
