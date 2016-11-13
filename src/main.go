@@ -7,6 +7,7 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	"math/rand"
+	"net"
 	"strconv"
 	"sync"
 	"time"
@@ -86,9 +87,11 @@ func main() {
 	var result string
 
 	for packet := range packetSource.Packets() {
+		analyzer.PacketSrcIP = nil
+		analyzer.PacketDstIP = nil
 		count++
 		for _, packetLayer := range packet.Layers() {
-			result = analyzer.PeelLayer(packetLayer)
+			result, analyzer.PacketDstIP, analyzer.PacketSrcIP = analyzer.PeelLayer(packetLayer)
 
 			if result == analyzer.MALICIOUS {
 				err := logPacketAsMalicious(packet)
@@ -100,11 +103,10 @@ func main() {
 			}
 
 		}
-		analyzer.PacketSrcIP = nil
 
 		fmt.Printf("%+v\n", packet)
 
-		err := logPacketInfo(packet, result, db)
+		err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
 		if err != nil {
 			panic(err)
 		}
@@ -122,16 +124,18 @@ func main() {
 		fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
 	}
 
+	return
 }
 
 var count = 1
 
 // Writes packet metadata to database.
-func logPacketInfo(packet gopacket.Packet, result string, db *sql.DB) error {
+func logPacketInfo(packet gopacket.Packet, result string, packetDstIP, packetSrcIP net.IP, db *sql.DB) error {
 
 	fmt.Println("count:", count)
 	item := &database.TestItem{
-		MAC:               "TEST MAC",
+		DstIP:             packetDstIP.String(),
+		SrcIP:             packetSrcIP.String(),
 		Compromised:       "false",
 		TimeClassifiedUTC: "0",
 		Description:       result,

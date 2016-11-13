@@ -7,7 +7,8 @@ import (
 )
 
 type TestItem struct {
-	MAC               string
+	DstIP             string
+	SrcIP             string
 	Compromised       string
 	TimeClassifiedUTC string
 	Description       string
@@ -22,7 +23,8 @@ func CreateTable(db *sql.DB) {
 	fmt.Println("CREATING TABLE")
 	sql_table := `
 	CREATE TABLE IF NOT EXISTS packets(
-		MAC TEXT,
+		DstIP TEXT,
+		SrcIP TEXT,
 		Compromised TEXT,
 		TimeClassifiedUTC TEXT,
 		Description TEXT,
@@ -52,14 +54,15 @@ func StoreItem(db *sql.DB, item TestItem) error {
 
 	sql_additem := `
 	INSERT OR REPLACE INTO packets(
-		MAC,
+		DstIP,
+		SrcIP,
 		Compromised,
 		TimeClassifiedUTC,
 		Description,
 		Action,
 		Success,
 		PacketID
-	) values(?, ?, ?, ?, ?, ?, ?)
+	) values(?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
 	stmt, err := db.Prepare(sql_additem)
@@ -68,7 +71,7 @@ func StoreItem(db *sql.DB, item TestItem) error {
 	}
 	defer stmt.Close()
 
-	_, err2 := stmt.Exec(item.MAC, item.Compromised, item.TimeClassifiedUTC, item.Description, item.Action, item.Success, item.PacketID)
+	_, err2 := stmt.Exec(item.DstIP, item.SrcIP, item.Compromised, item.TimeClassifiedUTC, item.Description, item.Action, item.Success, item.PacketID)
 	if err2 != nil {
 		panic(err2)
 	}
@@ -78,7 +81,7 @@ func StoreItem(db *sql.DB, item TestItem) error {
 
 func ReadItem(db *sql.DB) []TestItem {
 	sql_readall := `
-	SELECT MAC, Compromised, TimeClassifiedUTC, Description, Action, Success, PacketID FROM packets
+	SELECT DstIP, SrcIP, Compromised, TimeClassifiedUTC, Description, Action, Success, PacketID FROM packets
 	ORDER BY PacketID DESC
 	`
 
@@ -91,7 +94,7 @@ func ReadItem(db *sql.DB) []TestItem {
 	var result []TestItem
 	for rows.Next() {
 		item := TestItem{}
-		err2 := rows.Scan(&item.MAC, &item.Compromised, &item.TimeClassifiedUTC, &item.Description, &item.Action, &item.Success, &item.PacketID)
+		err2 := rows.Scan(&item.DstIP, &item.SrcIP, &item.Compromised, &item.TimeClassifiedUTC, &item.Description, &item.Action, &item.Success, &item.PacketID)
 		if err2 != nil {
 			panic(err2)
 		}
