@@ -2,31 +2,44 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
+	"io/ioutil"
 	"math/rand"
 	"net"
+	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
-	"kanashi/src/analyzer"
-	"kanashi/src/live"
+	"analyzer"
+	"live"
 
-	database "kanashi/src/db"
+	database "db"
 )
 
 var (
-	Live = flag.Bool("live", false, "read real data")
-	Intf = flag.String("intf", "eth0", "interface to monitor")
+	Live      = flag.Bool("live", false, "read real data")
+	Intf      = flag.String("intf", "eth0", "interface to monitor")
+	accountID = flag.String("accountID", "", "twilio account ID")
+	authToken = flag.String("authToken", "", "twilio auth token")
+
+	timeOfLastSMS = int64(0)
+	oneMinuteNano = int64(60000000000)
 )
 
 const (
 	pcapFileSrc = "../testdata/test_pcap.pcap"
 
 	SECOND_FRAC = 10
+
+	fromPhoneNumber = "+1 305-783-2802"
 )
 
 func init() {
@@ -91,7 +104,9 @@ func main() {
 			result, analyzer.PacketDstIP, analyzer.PacketSrcIP = analyzer.PeelLayer(packetLayer)
 
 			if result.Compromised == "True" {
-				err := logPacketAsMalicious(packet)
+				_ := sendSMSAlert(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP)
+
+				err = logPacketAsMalicious(packet)
 				if err != nil {
 					panic(err)
 				}
@@ -102,9 +117,11 @@ func main() {
 
 		fmt.Printf("%+v\n", analyzer.PacketSrcIP)
 
-		err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
-		if err != nil {
-			panic(err)
+		if result.Compromised == "True" {
+			err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		err = sendPacketThru(packet)
@@ -164,5 +181,63 @@ func logPacketAsMalicious(packet gopacket.Packet) error {
 func sendPacketThru(packet gopacket.Packet) error {
 	// TODO: Send packet to its destination.
 	//fmt.Printf("SENDING PACKET: %+v\n", packet)
+	return nil
+}
+
+func sendSMSAlert(packet gopacket.Packet, result *analyzer.Result, packetDstIP, packetSrcIP net.IP) error {
+	timeStamp := time.Now().UTC()
+	timeStampNanoseconds := timeStamp.UnixNano()
+
+	if timeOfLastSMS == 0 {
+		timeOfLastSMS = timeStampNanoseconds
+	} else if (timeStampNanoseconds - timeOfLastSMS) < oneMinuteNano {
+		// Hasn't been a minute since last alert.
+		return errors.New("text failed.. hasn't been a minute since last alert")
+	}
+
+	urlStr := "https://api.twilio.com/2010-04-01/Accounts/" + *accountID + "/Messages.json"
+
+	message := "KANASHI: MALICIOUS ACTIVITY RECORDED\n"
+	message = message + "Successfully filtered packet.\n\n"
+	message = message + "PROPERTIES:\n"
+	message = message + "SrcIP: " + packetSrcIP.String() + "\n"
+	message = message + "DstIP: " + packetDstIP.String() + "\n"
+	message = message + "TimestampUTC: " + timeStamp.String() + "\n"
+	message = message + "Description: " + result.Reason + "\n\n"
+	message = message + "Take appropriate measures to ensure that " + packetSrcIP.String() + " is secured."
+
+	// Build out the data for our message
+	v := url.Values{}
+	v.Set("To", "+1 727-422-4360")
+	v.Set("From", fromPhoneNumber)
+	v.Set("Body", message)
+	rb := *strings.NewReader(v.Encode())
+
+	// Create client
+	client := &http.Client{}
+
+	req, _ := http.NewRequest("POST", urlStr, &rb)
+	req.SetBasicAuth(*accountID, *authToken)
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	// Make request
+	resp, _ := client.Do(req)
+	fmt.Println(resp.Status)
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		var data map[string]interface{}
+		bodyBytes, _ := ioutil.ReadAll(resp.Body)
+		err := json.Unmarshal(bodyBytes, &data)
+		if err == nil {
+			fmt.Println(data["sid"])
+			return nil
+		}
+	} else {
+		fmt.Println(resp.Status)
+	}
+
+	timeOfLastSMS = timeStampNanoseconds
+
 	return nil
 }
