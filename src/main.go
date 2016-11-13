@@ -84,16 +84,20 @@ func main() {
 				break
 			}
 
-			err := logPacketInfo(packet, result, db)
-			if err != nil {
-				panic(err)
-			}
-
-			err = sendPacketThru(packet)
-			if err != nil {
-				panic(err)
-			}
 		}
+
+		analyzer.PacketSrcIP = nil
+
+		err := logPacketInfo(packet, result, db)
+		if err != nil {
+			panic(err)
+		}
+
+		err = sendPacketThru(packet)
+		if err != nil {
+			panic(err)
+		}
+
 
 		// FOR STATIC PCAP TESTING PURPOSES.
 		// Generates a random sleep duration between (1/(SECOND_FRAC+1)) and 1s.
