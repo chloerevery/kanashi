@@ -18,10 +18,10 @@ import (
 	"sync"
 	"time"
 
-	"kanashi/src/analyzer"
-	"kanashi/src/live"
+	"analyzer"
+	"live"
 
-	database "kanashi/src/db"
+	database "db"
 )
 
 var (
@@ -117,9 +117,11 @@ func main() {
 
 		fmt.Printf("%+v\n", analyzer.PacketSrcIP)
 
-		err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
-		if err != nil {
-			panic(err)
+		if result.Compromised == "True" {
+			err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		err = sendPacketThru(packet)

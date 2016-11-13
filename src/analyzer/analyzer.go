@@ -79,8 +79,8 @@ func PeelLayer(onionLayer gopacket.Layer) (*Result, net.IP, net.IP) {
 	case layers.LayerTypeIPv4:
 		ip, _ := onionLayer.(*layers.IPv4)
 
-		if string(ip.DstIP) == "111.222.33.44" {
-			fmt.Println("SPOOFED SOURCE")
+		if ip.DstIP.String() == "208.67.222.222" {
+			fmt.Printf("SPOOFED SOURCE %s\n", ip.DstIP.String())
 			PacketSrcIP = ip.SrcIP
 			PacketDstIP = ip.DstIP
 			return &Result{
@@ -127,7 +127,6 @@ func PeelLayer(onionLayer gopacket.Layer) (*Result, net.IP, net.IP) {
 		// TODO: Do we want to do any validation in the UDP layer?
 	case layers.LayerTypeUDP:
 		// udp, _ := onionLayer.(*layers.UDP)
-
 	}
 
 	return &Result{
