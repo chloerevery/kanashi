@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/mattn/go-sqlite3"
 )
 
 type TestItem struct {
@@ -31,6 +31,14 @@ func CreateTable(db *sql.DB) {
 	`
 
 	_, err := db.Exec(sql_table)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func DropTable(db *sql.DB) {
+	stmt := `DROP TABLE packets;`
+	_, err := db.Exec(stmt)
 	if err != nil {
 		panic(err)
 	}
@@ -87,4 +95,11 @@ func ReadItem(db *sql.DB) []TestItem {
 		result = append(result, item)
 	}
 	return result
+}
+
+// Register database driver.
+func CreateAndRegisterDriver() string {
+	var DB_DRIVER string
+	sql.Register(DB_DRIVER, &sqlite3.SQLiteDriver{})
+	return DB_DRIVER
 }

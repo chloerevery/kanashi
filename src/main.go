@@ -15,8 +15,6 @@ import (
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
-
-	"github.com/mattn/go-sqlite3"
 )
 
 const (
@@ -31,12 +29,15 @@ func init() {
 
 func main() {
 
-	// Register database driver.
-	var DB_DRIVER string
-	sql.Register(DB_DRIVER, &sqlite3.SQLiteDriver{})
+	DB_DRIVER := database.CreateAndRegisterDriver()
 
 	// Open database connection.
 	db, err := sql.Open(DB_DRIVER, "mysqlite_3")
+
+	// Empty database.
+	// TODO: Make this less hacky.
+	database.DropTable(db)
+
 	if err != nil {
 		panic(err)
 	}
@@ -47,6 +48,8 @@ func main() {
 
 	// Create table to store packet info and decisions.
 	database.CreateTable(db)
+
+	fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
 
 	// Initialize traffic analysis struct to check for destination IP spikes.
 	uniqueDestIps := &analyzer.UniqueDestIps{
@@ -99,6 +102,7 @@ func main() {
 		fmt.Println("count:", count)
 		fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
 	}
+
 }
 
 var count = 1
