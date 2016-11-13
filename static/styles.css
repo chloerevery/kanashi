@@ -44,17 +44,20 @@ canvas {
     margin-top: 50px;
 }
 
-#shield {
-    margin-top: 20px;
+#game {
+    margin-top: 3px;
+    margin-left: 5px;
+}
+#tv {
+    margin-top: 12px;
 }
 
-#toaster {
-    margin-left: 12px;
-    margin-top: 2px;
+#echo {
+    margin-left: 15px;
 }
 
 #camera {
-    margin-left: 3px;
+    margin-top: 5px;
 }
 
 .devices {
@@ -62,8 +65,11 @@ canvas {
     width: 0px;
     height: 0px;
     display: inline-block;
-    background: linear-gradient(azure, #4a90e2);
+    background: linear-gradient(#dec9fe, white);
     border-width: 10px;
+    border-radius: 50%;
+    border-color: #4990e2;
+    border-width: 2px; border-style: solid;
     border-radius: 50%;
     top: 0; bottom: 0; left: 0; right: 0;
     margin:auto;
@@ -74,7 +80,7 @@ canvas {
 
 #curve_chart {
     margin: auto;
-    margin-top: 250px;
+    margin-top: 50px;
 }
 
 table {
