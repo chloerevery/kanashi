@@ -9,7 +9,7 @@ import (
 )
 
 func InitInterface(intf string) (*pcap.Handle, error) {
-	handle, err := pcap.OpenLive(intf, 65535, false, 10*time.Second)
+	handle, err := pcap.OpenLive(intf, 65535, true, 10*time.Second)
 	if err != nil {
 		return nil, err
 	}

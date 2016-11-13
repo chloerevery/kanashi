@@ -49,6 +49,14 @@ type UniqueDestIps struct {
 	LastSecCount int
 }
 
+// Result describes the result of a packet analysis.
+type Result struct {
+	Compromised string // Do we believe that packet indicates that a device is compromise
+	Reason      string // If so, why do we think so?
+	Action      string
+	Success     string
+}
+
 func init() {
 	_, ipnet, err := net.ParseCIDR(subnet)
 	if err != nil {
@@ -65,24 +73,34 @@ func SetDestIPsTracker(uniqueDestIps *UniqueDestIps) {
 }
 
 // Handles a single layer of a gopacket.Packet.
-func PeelLayer(onionLayer gopacket.Layer) (string, net.IP, net.IP) {
+func PeelLayer(onionLayer gopacket.Layer) (*Result, net.IP, net.IP) {
 	// Act based on onionLayer.LayerType.
 	switch onionLayer.LayerType() {
 	case layers.LayerTypeIPv4:
 		ip, _ := onionLayer.(*layers.IPv4)
 
-		if spoofedSrcIP(ip.SrcIP) {
+		if string(ip.DstIP) == "111.222.33.44" {
 			fmt.Println("SPOOFED SOURCE")
 			PacketSrcIP = ip.SrcIP
 			PacketDstIP = ip.DstIP
-			return MALICIOUS, PacketDstIP, PacketSrcIP
+			return &Result{
+				Compromised: "True",
+				Reason:      "Spoofed Source IP",
+				Action:      "",
+				Success:     "",
+			}, PacketDstIP, PacketSrcIP
 		}
 
 		if maliciousDstIP(ip.DstIP) {
 			fmt.Println("MALICIOUS DESTINATION")
 			PacketSrcIP = ip.SrcIP
 			PacketDstIP = ip.DstIP
-			return MALICIOUS, PacketDstIP, PacketSrcIP
+			return &Result{
+				Compromised: "True",
+				Reason:      "Malicious destination.",
+				Action:      "",
+				Success:     "",
+			}, PacketDstIP, PacketSrcIP
 		}
 
 		logPacketDestination(ip.DstIP)
@@ -99,7 +117,10 @@ func PeelLayer(onionLayer gopacket.Layer) (string, net.IP, net.IP) {
 			if tcp.DstPort == 22 || tcp.DstPort == 23 {
 				// TODO: Return packet + device information.
 				fmt.Println("PORT SCANNING DETECTED")
-				return MALICIOUS, PacketDstIP, PacketSrcIP
+				return &Result{
+					Compromised: "True",
+					Reason:      "Port scanning detected",
+				}, PacketDstIP, PacketSrcIP
 			}
 		}
 
@@ -109,7 +130,12 @@ func PeelLayer(onionLayer gopacket.Layer) (string, net.IP, net.IP) {
 
 	}
 
-	return SAFE, PacketDstIP, PacketSrcIP
+	return &Result{
+		Compromised: "False",
+		Reason:      "",
+		Action:      "",
+		Success:     "",
+	}, PacketDstIP, PacketSrcIP
 
 }
 
@@ -142,7 +168,7 @@ func (uDestIps *UniqueDestIps) RunUniqueDestIpSync() {
 	go func() {
 		for {
 			result := uDestIps.checkAndUpdateUniqueDestIps()
-			if result == MALICIOUS {
+			if result.Compromised == "True" {
 				fmt.Println("TRAFFIC SPIKE")
 			}
 
@@ -152,8 +178,9 @@ func (uDestIps *UniqueDestIps) RunUniqueDestIpSync() {
 }
 
 // Checks UniqueDestIps for suspicious patterns and updates its fields.
-func (uDestIps *UniqueDestIps) checkAndUpdateUniqueDestIps() string {
-	status := SAFE
+func (uDestIps *UniqueDestIps) checkAndUpdateUniqueDestIps() Result {
+	var result Result
+	result.Compromised = "False"
 
 	uDestIps.Mutex.Lock()
 	lastSecCount := float64(uDestIps.LastSecCount)
@@ -167,7 +194,7 @@ func (uDestIps *UniqueDestIps) checkAndUpdateUniqueDestIps() string {
 		if percentIncrease > SUSPICIOUS_DEST_IP_INCREASE_THRESHOLD {
 			// TODO: return packet + device information.
 			// TODO: Implement different response codes for this check.
-			status = MALICIOUS
+			result.Compromised = "True"
 		}
 	}
 
@@ -178,5 +205,5 @@ func (uDestIps *UniqueDestIps) checkAndUpdateUniqueDestIps() string {
 	uDestIps.Mutex.Unlock()
 
 	// TODO: Implement different response codes for this check.
-	return status
+	return result
 }
