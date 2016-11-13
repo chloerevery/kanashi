@@ -7,7 +7,6 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	"math/rand"
-	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -23,6 +22,7 @@ import (
 
 var (
 	Live = *flag.Bool("live", false, "read real data")
+	Intf = *flag.String("intf", "eth0", "interface to monitor")
 )
 
 const (
@@ -36,10 +36,7 @@ func init() {
 }
 
 func main() {
-	if Live {
-		live.Process()
-		os.Exit(0)
-	}
+	flag.Parse()
 	DB_DRIVER := database.CreateAndRegisterDriver()
 
 	// Open database connection.
@@ -70,10 +67,16 @@ func main() {
 	analyzer.SetDestIPsTracker(uniqueDestIps)
 
 	// Read data from a pcap file.
-	handle, err := pcap.OpenOffline(pcapFileSrc)
+	var handle *pcap.Handle
+	if Live {
+		handle, err = live.InitInterface(Intf)
+	} else {
+		handle, err = pcap.OpenOffline(pcapFileSrc)
+	}
 	if err != nil {
 		panic(err)
 	}
+	defer handle.Close()
 
 	// Construct packetSource using pcap file.
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
