@@ -40,11 +40,12 @@
       <div class="KANA-SHI"><img src="https://scontent-sjc2-1.xx.fbcdn.net/v/t34.0-0/p280x280/15050246_10155417697559460_523695731_n.gif?oh=f268314ce1e611367ec1dc4944d26887&oe=582AF816" width ="125px" height=" 100px"/></div>
 
     <canvas id="canvas"></canvas>
-        <div id="network"><img id="shield" src="http://www.freeiconspng.com/uploads/shield-png-10.png" width="70px" height="70px"></div>
-        <div class="devices" id="1" style="visibility:hidden" style="cursor:pointer"><img id="camera" src="http://simpleicon.com/wp-content/uploads/camera.png" width="70px" height="70px"></div>
-        <div class="devices" id="2" style="visibility:hidden" style="cursor:pointer"> <img id="echo" src="https://cdn1.iconfinder.com/data/icons/modern-future-technology-2/128/smart-speaker-512.png" width="75px" height="75px"></div>
-        <div class="devices" id="3" style="visibility:hidden" style="cursor:pointer"><img id="toaster" src="https://cdn3.iconfinder.com/data/icons/breakfast-icons/459/Toaster-512.png" width="60px" height="60px"></div>
-
+        <div class="top">
+          <div class="devices" id="1" style="visibility:hidden" style="cursor:pointer"><img id="camera" src="http://simpleicon.com/wp-content/uploads/camera.png" width="70px" height="70px"></div>
+          <div class="devices" id="2" style="visibility:hidden" style="cursor:pointer"> <img id="echo" src="https://cdn1.iconfinder.com/data/icons/modern-future-technology-2/128/smart-speaker-512.png" width="75px" height="75px"></div>
+          <div class="devices" id="3" style="visibility:hidden" style="cursor:pointer"><img id="toaster" src="https://cdn3.iconfinder.com/data/icons/breakfast-icons/459/Toaster-512.png" width="60px" height="60px"></div>
+          <div class="devices" id="4" style="visibility:hidden" style="cursor:pointer"><img id="toaster" src="https://cdn3.iconfinder.com/data/icons/breakfast-icons/459/Toaster-512.png" width="60px" height="60px"></div>
+        </div>
         <div id="curve_chart" style="width: 900px; height: 500px"></div>
 
       <div id ="table">
@@ -159,19 +160,18 @@ function update() {
   requestAnimationFrame(update);
 }
 
-var numDevices = 2;
-for (var i=0; i<numDevices; i++) {
-  var ratio = 360/numDevices;
 
-}
 $(document).ready(function() {
-  console.log("loaded");
-  $("#1").animate({position: "relative", bottom: '+=325', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},750);
-  $("#2").animate({position: "relative",right: '225px', bottom: '-=200', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},1750);
-  $("#3").animate({position: "relative",left: '225px',bottom: '-=200', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},2250);
+  
+  $("#1").animate({position: "relative", bottom: '+=375', right: '400px',height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},750);
+  $("#2").animate({position: "relative",right: '400px', bottom: '-=200', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},1750);
+  $("#3").animate({position: "relative",left: '400px',bottom: '-=200', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},2250);
+  $("#4").animate({position: "relative", bottom: '+=375', left: '400px', height: '75px', width: '75px', padding: '20px', fontSize: '1.5em'},750);
   document.getElementById("1").style.visibility='visible';  
   document.getElementById("2").style.visibility='visible'; 
   document.getElementById("3").style.visibility='visible';
+  document.getElementById("4").style.visibility='visible';
+
 });
 
 
