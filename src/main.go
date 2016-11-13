@@ -104,7 +104,7 @@ func main() {
 			result, analyzer.PacketDstIP, analyzer.PacketSrcIP = analyzer.PeelLayer(packetLayer)
 
 			if result.Compromised == "True" {
-				_ := sendSMSAlert(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP)
+				sendSMSAlert(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP)
 
 				err = logPacketAsMalicious(packet)
 				if err != nil {
@@ -164,7 +164,7 @@ func logPacketInfo(packet gopacket.Packet, result *analyzer.Result, packetDstIP,
 		return err
 	}
 
-	return nil
+	return nil 
 }
 
 func logPacketAsMalicious(packet gopacket.Packet) error {
@@ -190,10 +190,13 @@ func sendSMSAlert(packet gopacket.Packet, result *analyzer.Result, packetDstIP, 
 
 	if timeOfLastSMS == 0 {
 		timeOfLastSMS = timeStampNanoseconds
-	} else if (timeStampNanoseconds - timeOfLastSMS) < oneMinuteNano {
-		// Hasn't been a minute since last alert.
-		return errors.New("text failed.. hasn't been a minute since last alert")
-	}
+	} else {
+	    if (timeStampNanoseconds - timeOfLastSMS) < oneMinuteNano {
+		    // Hasn't been a minute since last alert.
+		    return errors.New("text failed.. hasn't been a minute since last alert")
+	    }	
+	    timeOfLastSMS = timeStampNanoseconds
+    }
 
 	urlStr := "https://api.twilio.com/2010-04-01/Accounts/" + *accountID + "/Messages.json"
 
@@ -236,8 +239,6 @@ func sendSMSAlert(packet gopacket.Packet, result *analyzer.Result, packetDstIP, 
 	} else {
 		fmt.Println(resp.Status)
 	}
-
-	timeOfLastSMS = timeStampNanoseconds
 
 	return nil
 }
