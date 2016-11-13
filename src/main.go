@@ -68,7 +68,6 @@ func main() {
 	// Create table to store packet info and decisions.
 	database.CreateTable(db)
 
-	fmt.Println("CONTENTS OF DATABASE (SHOULD BE EMPTY)", database.ReadItem(db))
 	// Initialize traffic analysis struct to check for destination IP spikes.
 	uniqueDestIps := &analyzer.UniqueDestIps{
 		Mutex:        &sync.Mutex{},
@@ -115,8 +114,6 @@ func main() {
 
 		}
 
-		fmt.Printf("%+v\n", analyzer.PacketSrcIP)
-
 		// Log packet data.
 		err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
 		if err != nil {
@@ -135,7 +132,6 @@ func main() {
 		sleepDuration := time.Second / time.Duration(rand.Intn(SECOND_FRAC)+1)
 		time.Sleep(sleepDuration)
 		//fmt.Println("count:", count)
-		fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
 	}
 
 	return
@@ -146,7 +142,6 @@ var count = 1
 // Writes packet metadata to database.
 func logPacketInfo(packet gopacket.Packet, result *analyzer.Result, packetDstIP, packetSrcIP net.IP, db *sql.DB) error {
 
-	//fmt.Println("count:", count)
 	item := &database.TestItem{
 		DstIP:             packetDstIP.String(),
 		SrcIP:             packetSrcIP.String(),
@@ -159,8 +154,6 @@ func logPacketInfo(packet gopacket.Packet, result *analyzer.Result, packetDstIP,
 	}
 
 	count++
-
-	fmt.Println("storing item", item)
 
 	err := database.StoreItem(db, *item)
 	if err != nil {
@@ -183,7 +176,6 @@ func logPacketAsMalicious(packet gopacket.Packet) error {
 
 func sendPacketThru(packet gopacket.Packet) error {
 	// TODO: Send packet to its destination.
-	//fmt.Printf("SENDING PACKET: %+v\n", packet)
 	return nil
 }
 
