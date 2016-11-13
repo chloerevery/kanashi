@@ -1,17 +1,11 @@
 {
   "nodes": [
-    {"id": "DeviceA", "group": 1},
-    {"id": "DeviceB", "group": 1},
-    {"id": "DeviceC", "group": 1},
-    {"id": "DeviceD", "group": 1},
-    {"id": "DeviceE", "group": 1},
+    {"id": "Alexa", "group": 1},
+    {"id": "Galaxy S5", "group": 1},
     {"id": "Network", "group": 1}
   ],
   "links": [
-    {"source": "DeviceA", "target": "Network", "value": 2},
-    {"source": "DeviceB", "target": "Network", "value": 8},
-    {"source": "DeviceC", "target": "Network", "value": 10},
-    {"source": "DeviceD", "target": "Network", "value": 6}
-    {"source": "DeviceE", "target": "Network", "value": 4}
+    {"source": "Alexa", "target": "Network", "value": 6},
+    {"source": "Galaxy S5", "target": "Network", "value": 6}
   ]
 }
