@@ -117,16 +117,17 @@ func main() {
 
 		fmt.Printf("%+v\n", analyzer.PacketSrcIP)
 
-		if result.Compromised == "True" {
-			err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
+		// Log packet data.
+		err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
+		if err != nil {
+			panic(err)
+		}
+
+		if result.Compromised == "False" {
+			err = sendPacketThru(packet)
 			if err != nil {
 				panic(err)
 			}
-		}
-
-		err = sendPacketThru(packet)
-		if err != nil {
-			panic(err)
 		}
 
 		// FOR STATIC PCAP TESTING PURPOSES.
@@ -134,7 +135,7 @@ func main() {
 		sleepDuration := time.Second / time.Duration(rand.Intn(SECOND_FRAC)+1)
 		time.Sleep(sleepDuration)
 		//fmt.Println("count:", count)
-		//fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
+		fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
 	}
 
 	return
@@ -158,6 +159,8 @@ func logPacketInfo(packet gopacket.Packet, result *analyzer.Result, packetDstIP,
 	}
 
 	count++
+
+	fmt.Println("storing item", item)
 
 	err := database.StoreItem(db, *item)
 	if err != nil {
