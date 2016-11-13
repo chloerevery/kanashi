@@ -79,8 +79,8 @@ func PeelLayer(onionLayer gopacket.Layer) (*Result, net.IP, net.IP) {
 	case layers.LayerTypeIPv4:
 		ip, _ := onionLayer.(*layers.IPv4)
 
-		if ip.DstIP.String() == "111.222.33.44" {
-			fmt.Println("SPOOFED SOURCE")
+		if ip.DstIP.String() == "208.67.222.222" {
+			fmt.Printf("SPOOFED SOURCE %s\n", ip.DstIP.String())
 			PacketSrcIP = ip.SrcIP
 			PacketDstIP = ip.DstIP
 			return &Result{
