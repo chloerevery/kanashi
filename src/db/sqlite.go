@@ -36,8 +36,9 @@ func CreateTable(db *sql.DB) {
 	}
 }
 
+// Drops packets table if it exists.
 func DropTable(db *sql.DB) {
-	stmt := `DROP TABLE packets;`
+	stmt := `DROP TABLE IF EXISTS packets;`
 	_, err := db.Exec(stmt)
 	if err != nil {
 		panic(err)
