@@ -68,7 +68,8 @@
 
 
         {% for packet in packets_to_ip_a %}
-          <tr>
+        
+          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
             <td>{{ packet.time_classified_utc }}</td>
             <td>{{ packet.compromised }}</td>
             <td>{{ packet.description }}</td>
@@ -99,7 +100,7 @@
         <td>Packet uID</td>
 
         {% for packet in packets_from_ip_a %}
-          <tr>
+          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
             <td>{{ packet.time_classified_utc }}</td>
             <td>{{ packet.compromised }}</td>
             <td>{{ packet.description }}</td>
@@ -130,7 +131,7 @@
         </tr>
 
         {% for packet in packets_to_ip_b %}
-          <tr>
+          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
             <td>{{ packet.time_classified_utc }}</td>
             <td>{{ packet.compromised }}</td>
             <td>{{ packet.description }}</td>
@@ -162,7 +163,7 @@
         </tr>
 
         {% for packet in packets_from_ip_b %}
-          <tr>
+          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
             <td>{{ packet.time_classified_utc }}</td>
             <td>{{ packet.compromised }}</td>
             <td>{{ packet.description }}</td>
@@ -197,7 +198,7 @@
 
 
         {% for packet in all_packets %}
-          <tr>
+          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
             <td>{{ packet.time_classified_utc }}</td>
             <td>{{ packet.compromised }}</td>
             <td>{{ packet.description }}</td>
