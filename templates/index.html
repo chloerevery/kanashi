@@ -69,15 +69,15 @@
 
         {% for packet in packets_to_ip_a %}
         
-          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
-            <td>{{ packet.time_classified_utc }}</td>
-            <td>{{ packet.compromised }}</td>
-            <td>{{ packet.description }}</td>
-            <td>{{ packet.action }}</td>
-            <td>{{ packet.success }}</td>
-            <td>{{ packet.src_IP }}</td>
-            <td>{{ packet.dest_IP }}</td>
-            <td>{{ packet.packet_ID }}</td>
+          <tr>
+               <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.time_classified_utc }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.compromised }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.description }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.action }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.success }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.src_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.dest_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.packet_ID }}</td>
           </tr>
         {% endfor %}
 
@@ -100,15 +100,15 @@
         <td>Packet uID</td>
 
         {% for packet in packets_from_ip_a %}
-          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
-            <td>{{ packet.time_classified_utc }}</td>
-            <td>{{ packet.compromised }}</td>
-            <td>{{ packet.description }}</td>
-            <td>{{ packet.action }}</td>
-            <td>{{ packet.success }}</td>
-            <td>{{ packet.src_IP }}</td>
-            <td>{{ packet.dest_IP }}</td>
-            <td>{{ packet.packet_ID }}</td>
+          <tr>
+               <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.time_classified_utc }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.compromised }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.description }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.action }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.success }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.src_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.dest_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.packet_ID }}</td>
           </tr>
         {% endfor %}
         </table>
@@ -131,15 +131,15 @@
         </tr>
 
         {% for packet in packets_to_ip_b %}
-          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
-            <td>{{ packet.time_classified_utc }}</td>
-            <td>{{ packet.compromised }}</td>
-            <td>{{ packet.description }}</td>
-            <td>{{ packet.action }}</td>
-            <td>{{ packet.success }}</td>
-            <td>{{ packet.src_IP }}</td>
-            <td>{{ packet.dest_IP }}</td>
-            <td>{{ packet.packet_ID }}</td>
+          <tr>
+               <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.time_classified_utc }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.compromised }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.description }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.action }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.success }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.src_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.dest_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.packet_ID }}</td>
           </tr>
         {% endfor %}
 
@@ -163,15 +163,15 @@
         </tr>
 
         {% for packet in packets_from_ip_b %}
-          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
-            <td>{{ packet.time_classified_utc }}</td>
-            <td>{{ packet.compromised }}</td>
-            <td>{{ packet.description }}</td>
-            <td>{{ packet.action }}</td>
-            <td>{{ packet.success }}</td>
-            <td>{{ packet.src_IP }}</td>
-            <td>{{ packet.dest_IP }}</td>
-            <td>{{ packet.packet_ID }}</td>
+          <tr>
+                <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.time_classified_utc }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.compromised }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.description }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.action }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.success }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.src_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.dest_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.packet_ID }}</td>
           </tr>
         {% endfor %}
 
@@ -202,15 +202,15 @@
 
 
         {% for packet in all_packets %}
-          <tr {% if packet.compromised %} bgcolor="#ffa366" {% endif %}>
-            <td>{{ packet.time_classified_utc }}</td>
-            <td>{{ packet.compromised }}</td>
-            <td>{{ packet.description }}</td>
-            <td>{{ packet.action }}</td>
-            <td>{{ packet.success }}</td>
-            <td>{{ packet.src_IP }}</td>
-            <td>{{ packet.dest_IP }}</td>
-            <td>{{ packet.packet_ID }}</td>
+          <tr>
+             <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.time_classified_utc }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.compromised }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.description }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.action }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.success }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.src_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.dest_IP }}</td>
+            <td{% if packet.compromised == "True" %} bgcolor="#ffa366" {% endif %}>{{ packet.packet_ID }}</td>
           </tr>
         {% endfor %}
 
@@ -218,6 +218,13 @@
 
         </table>
       </div>
+      <br>
+      <br>
+
+      <br>
+      <br><br>
+      <br><br>
+      <br>
 
 
       
