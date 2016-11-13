@@ -18,6 +18,8 @@ type TestItem struct {
 
 func CreateTable(db *sql.DB) {
 	// create table if not exists
+
+	fmt.Println("CREATING TABLE")
 	sql_table := `
 	CREATE TABLE IF NOT EXISTS packets(
 		MAC TEXT,

@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	Live = *flag.Bool("live", false, "read real data")
+	Live = flag.Bool("live", false, "read real data")
 	Intf = *flag.String("intf", "eth0", "interface to monitor")
 )
 
@@ -68,7 +68,7 @@ func main() {
 
 	// Read data from a pcap file.
 	var handle *pcap.Handle
-	if Live {
+	if *Live {
 		handle, err = live.InitInterface(Intf)
 	} else {
 		handle, err = pcap.OpenOffline(pcapFileSrc)
@@ -104,7 +104,7 @@ func main() {
 
 		fmt.Printf("%+v\n", packet)
 
-		/*err := logPacketInfo(packet, result, db)
+		err := logPacketInfo(packet, result, db)
 		if err != nil {
 			panic(err)
 		}
@@ -112,7 +112,7 @@ func main() {
 		err = sendPacketThru(packet)
 		if err != nil {
 			panic(err)
-		}*/
+		}
 
 		// FOR STATIC PCAP TESTING PURPOSES.
 		// Generates a random sleep duration between (1/(SECOND_FRAC+1)) and 1s.
