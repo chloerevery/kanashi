@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"kanashi/src/analyzer"
-	"kanashi/src/live"
+	"analyzer"
+	"live"
 
-	database "kanashi/src/db"
+	database "db"
 )
 
 var (
