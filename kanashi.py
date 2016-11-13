@@ -46,7 +46,7 @@ def connect_db():
         
         cur = con.cursor()
 
-        cur.execute('SELECT * FROM packets') # WHERE SrcIP = "10:a5:d0:e2:ed:35"') #  WHERE MAC = galaxy_MAC
+        cur.execute('SELECT * FROM packets ORDER BY TimeClassifiedUTC') # WHERE SrcIP = "10:a5:d0:e2:ed:35"') #  WHERE MAC = galaxy_MAC
         
         data = cur.fetchall()
         for packet in data:

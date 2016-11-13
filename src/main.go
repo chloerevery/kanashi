@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
-	"analyzer"
-	"live"
+	"kanashi/src/analyzer"
+	"kanashi/src/live"
 
-	database "db"
+	database "kanashi/src/db"
 )
 
 var (
@@ -81,7 +81,7 @@ func main() {
 
 	var count int
 
-	var result string
+	var result *analyzer.Result
 
 	for packet := range packetSource.Packets() {
 		analyzer.PacketSrcIP = nil
@@ -90,7 +90,7 @@ func main() {
 		for _, packetLayer := range packet.Layers() {
 			result, analyzer.PacketDstIP, analyzer.PacketSrcIP = analyzer.PeelLayer(packetLayer)
 
-			if result == analyzer.MALICIOUS {
+			if result.Compromised == "True" {
 				err := logPacketAsMalicious(packet)
 				if err != nil {
 					panic(err)
@@ -100,7 +100,7 @@ func main() {
 
 		}
 
-		fmt.Printf("%+v\n", packet)
+		//fmt.Printf("%+v\n", packet)
 
 		err := logPacketInfo(packet, result, analyzer.PacketDstIP, analyzer.PacketSrcIP, db)
 		if err != nil {
@@ -116,8 +116,8 @@ func main() {
 		// Generates a random sleep duration between (1/(SECOND_FRAC+1)) and 1s.
 		sleepDuration := time.Second / time.Duration(rand.Intn(SECOND_FRAC)+1)
 		time.Sleep(sleepDuration)
-		fmt.Println("count:", count)
-		fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
+		//fmt.Println("count:", count)
+		//fmt.Println("CONTENTS OF DATABASE", database.ReadItem(db))
 	}
 
 	return
@@ -126,17 +126,17 @@ func main() {
 var count = 1
 
 // Writes packet metadata to database.
-func logPacketInfo(packet gopacket.Packet, result string, packetDstIP, packetSrcIP net.IP, db *sql.DB) error {
+func logPacketInfo(packet gopacket.Packet, result *analyzer.Result, packetDstIP, packetSrcIP net.IP, db *sql.DB) error {
 
-	fmt.Println("count:", count)
+	//fmt.Println("count:", count)
 	item := &database.TestItem{
 		DstIP:             packetDstIP.String(),
 		SrcIP:             packetSrcIP.String(),
-		Compromised:       "false",
+		Compromised:       result.Compromised,
 		TimeClassifiedUTC: time.Now().Format(time.RFC3339),
-		Description:       result,
-		Action:            "TEST ACTION",
-		Success:           "TEST SUCCESS",
+		Description:       result.Reason,
+		Action:            result.Action,
+		Success:           result.Success,
 		PacketID:          strconv.Itoa(count),
 	}
 
@@ -153,7 +153,7 @@ func logPacketInfo(packet gopacket.Packet, result string, packetDstIP, packetSrc
 func logPacketAsMalicious(packet gopacket.Packet) error {
 	// TODO: Grab the first param, to-contain packet info.
 
-	fmt.Printf("REJECTED PACKET: %+v\n", packet)
+	//fmt.Printf("REJECTED PACKET: %+v\n", packet)
 
 	// info = "packet was bad"
 
@@ -163,6 +163,6 @@ func logPacketAsMalicious(packet gopacket.Packet) error {
 
 func sendPacketThru(packet gopacket.Packet) error {
 	// TODO: Send packet to its destination.
-	fmt.Printf("SENDING PACKET: %+v\n", packet)
+	//fmt.Printf("SENDING PACKET: %+v\n", packet)
 	return nil
 }
