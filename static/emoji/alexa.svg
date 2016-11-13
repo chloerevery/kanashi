@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="17px" height="28px" viewBox="0 0 17 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41 (35326) - http://www.bohemiancoding.com/sketch -->
+    <title>alexa</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M15,2.64550781 L15,22.4035586 C15,24.4350522 13.4512335,26.0819031 11.5398627,26.0819031 L3.46013728,26.0819031 C1.54915623,26.0819031 0,24.431659 0,22.4035586 L0,2.87084961" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="15" height="23.4363953" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop" transform="translate(-60.000000, -181.000000)">
+            <g id="alexa" transform="translate(61.000000, 182.000000)">
+                <g id="Group-2">
+                    <use id="Rectangle-2" stroke="#9012FE" mask="url(#mask-2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" xlink:href="#path-1"></use>
+                    <path d="M7.5,4.495714 C11.0898509,4.495714 14.4390869,3.64795992 14.4390869,2.60220225 C14.4390869,1.55644459 11.0898509,0.7086905 7.5,0.7086905 C3.91014913,0.7086905 0.519897461,1.55644459 0.519897461,2.60220225 C0.519897461,3.64795992 3.91014913,4.495714 7.5,4.495714 Z" id="Oval-2" stroke="#9013FE" stroke-width="1.5"></path>
+                    <rect id="Rectangle-4" fill="#9013FE" x="2" y="21.9908558" width="4" height="1.77574574"></rect>
+                    <rect id="Rectangle-4" fill="#9013FE" x="2" y="19.3272372" width="4" height="1.77574574"></rect>
+                    <rect id="Rectangle-4" fill="#9013FE" x="2" y="16.6636186" width="4" height="1.77574574"></rect>
+                    <rect id="Rectangle-4" fill="#9013FE" x="2" y="14" width="4" height="1.77574574"></rect>
+                    <rect id="Rectangle-4" fill="#9013FE" x="7" y="21.9908558" width="4" height="1.77574574"></rect>
+                    <rect id="Rectangle-4" fill="#9013FE" x="7" y="19.3272372" width="4" height="1.77574574"></rect>
+                    <rect id="Rectangle-4" fill="#9013FE" x="7" y="16.6636186" width="4" height="1.77574574"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
