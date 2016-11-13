@@ -2,11 +2,13 @@
 *.o
 *.a
 *.so
+mysqlite_3
 
 # Folders
 _obj
 _test
 github.com
+golang.org
 
 # Architecture specific extensions/prefixes
 *.[568vq]
