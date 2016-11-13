@@ -164,7 +164,7 @@ func logPacketInfo(packet gopacket.Packet, result *analyzer.Result, packetDstIP,
 		return err
 	}
 
-	return nil 
+	return nil
 }
 
 func logPacketAsMalicious(packet gopacket.Packet) error {
@@ -191,12 +191,12 @@ func sendSMSAlert(packet gopacket.Packet, result *analyzer.Result, packetDstIP, 
 	if timeOfLastSMS == 0 {
 		timeOfLastSMS = timeStampNanoseconds
 	} else {
-	    if (timeStampNanoseconds - timeOfLastSMS) < oneMinuteNano {
-		    // Hasn't been a minute since last alert.
-		    return errors.New("text failed.. hasn't been a minute since last alert")
-	    }	
-	    timeOfLastSMS = timeStampNanoseconds
-    }
+		if (timeStampNanoseconds - timeOfLastSMS) < oneMinuteNano {
+			// Hasn't been a minute since last alert.
+			return errors.New("text failed.. hasn't been a minute since last alert")
+		}
+		timeOfLastSMS = timeStampNanoseconds
+	}
 
 	urlStr := "https://api.twilio.com/2010-04-01/Accounts/" + *accountID + "/Messages.json"
 

@@ -32,6 +32,26 @@ body {
   box-shadow: .2em .2em .2em #444;
 }
 
+#from-device-a {
+    display: none;
+}
+
+#to-device-a {
+    display: none;
+}
+
+#from-device-b {
+    display: none;
+}
+
+#to-device-b {
+    display: none;
+}
+
+#all-packets {
+    display: none;
+}
+
 canvas {
     margin: auto;
     text-align: center;
